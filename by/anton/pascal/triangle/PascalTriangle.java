@@ -7,6 +7,7 @@
 package by.anton.pascal.triangle;
 
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This class is used to input the number of lines
@@ -15,56 +16,74 @@ import java.util.Scanner;
  * @version    19.0.1 2022-10-18
  * @author     Anton Punko
  */
-public class PascalTriangle {
-    private static final Scanner scanner = new Scanner(System.in);    //scanner is created to get number
-                                                                      // of rows from the user
-    private              int     arrayOfRows;                         //variable to set the size of the array
 
-    /* This method is used to calculate the triangle and enter it into the array
-    P.S. I decided to do everything together, if necessary, I will do it separately */
-    public void triangleCalculation() {
+public class PascalTriangle {
+    private static final Scanner scanner = new Scanner(System.in);    //Scanner is created to get number
+                                                                      // of rows from the user
+    private              int     arrayOfRows;                         //Variable to set the size of the array
+
+    /* This method is used to calculate the triangle */
+    public long[][] triangleCalculation() throws InterruptedException {
         long[][] triangle = new long[arrayOfRows][arrayOfRows];       //The array has a long type so that you can create
                                                                       //huge pascal triangles. P.S. At first I wanted to
                                                                       //create a two-dimensional list, but not a single
                                                                       //example from the internet began to work for me
 
-        /* double for loop to calculate triangle */
+        /* Double for loop to calculate triangle */
         for (int i = 0; i < arrayOfRows; i++) {
-            for (int j = 0; j <= i; j++) {
+            for (int j = 0, k = i; j <= k; j++, k--) {
 
-                /* checking for the place of a number in a triangle and calculating the corresponding value */
-                if (j == 0 || j == i) {
+                /* Checking for the place of a number in a triangle and calculating the corresponding value */
+                if (j == 0) {
                     triangle[i][j] = 1;
-                } else {
-                    triangle[i][j] = triangle[i - 1][j - 1] + triangle[i - 1][j]; // formula for calculating a number in
-                                                                                  // a triangle
-                }
+                    triangle[i][k] = 1;
 
-                /* printing our triangle */
+                /* Filling an array at once from the beginning and end */
+                } else {
+                    if (j == k) {
+                        triangle[i][j] = triangle[i - 1][j - 1] + triangle[i - 1][j]; // Formula for calculating a number in
+                                                                                      // a triangle
+                    } else {
+                        triangle[i][j] = triangle[i - 1][j - 1] + triangle[i - 1][j];
+                        triangle[i][k] = triangle[i][j];
+                    }
+
+                }
+            }
+        }
+
+        return triangle;
+    }
+
+
+    /* Outputting an array to the console */
+    public void printingTheArray(long[][] triangle) {
+
+        /* Creating a double loop for output */
+        for (int i = 0; i < triangle.length; i++) {
+            for (int j = 0; j <= i; j++) {
                 System.out.print(triangle[i][j] + " ");
             }
-
-            /* creating new line */
             System.out.println();
         }
     }
 
-    /* method for user input */
+    /* Method for user input */
     public void enterStringsOfTriangle() {
 
         System.out.println("Введите количество строк треугольника Паскаля");
 
-        /* creating an infinite input to get the correct value */
+        /* Creating an infinite input to get the correct value */
         while (true) {
 
-            /* checking for new line */
+            /* Checking for new line */
             if (scanner.hasNext()) {
 
-                /* checking for int number */
+                /* Checking for int number */
                 if (scanner.hasNextInt()) {
-                    arrayOfRows = scanner.nextInt(); // setting array size
+                    arrayOfRows = scanner.nextInt(); // Setting array size
 
-                    /* checking if a number is positive because a triangle cannot be negative */
+                    /* Checking if a number is positive because a triangle cannot be negative */
                     if (arrayOfRows > 0) {
                         break;
                     }

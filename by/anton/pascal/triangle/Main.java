@@ -17,10 +17,10 @@ package by.anton.pascal.triangle;
 public class Main {
 
     /* Main program logic */
-    public static void main(String[] args) {
-        PascalTriangle triangle = new PascalTriangle();     //creating an instance of a class
+    public static void main(String[] args) throws InterruptedException {
+        PascalTriangle triangle = new PascalTriangle();               //Ceating an instance of a class
 
-        triangle.enterStringsOfTriangle();                  //launching a method to receive data from the user
-        triangle.triangleCalculation();                     //triangle calculation
+        triangle.enterStringsOfTriangle();                            //Launching a method to receive data from the user
+        triangle.printingTheArray(triangle.triangleCalculation());    //Triangle calculation and printing array
     }
 }
