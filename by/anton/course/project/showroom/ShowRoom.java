@@ -1,3 +1,9 @@
+/*
+ * %W% %E% Anton Punko
+ *
+ * Copyright (c) 2023 GNU GPL, Inc. All Rights Reserved
+ */
+
 package by.anton.course.project.showroom;
 
 import by.anton.course.project.Car;
@@ -11,9 +17,18 @@ import by.anton.course.project.service.*;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
+
+/**
+ *
+ * A class used as a facade and work with cars and their production
+ *
+ * @version    19.0.1 2022-10-18
+ * @author     Anton Punko
+ */
 
 public class ShowRoom {
+
+    /* creation of a truck manufacturing plant and transfer of possible parameters for production */
     private final Factory<TruckCar> truckFactory = new Factory<>(
             Arrays.asList(Model.MAZ, Model.MERCEDES),
             Arrays.asList(EngineCapacity.AVERAGE_VALUE, EngineCapacity.LARGE_VALUE),
@@ -42,10 +57,11 @@ public class ShowRoom {
             CarType.TOWN_CAR
     );
 
-    private final ColorService colorService = new ColorService();
+    private final ColorService colorService = new ColorService();               //service class instances to work with
     private final OptionsService optionsService = new OptionsService();
     private final WheelService wheelService = new WheelService();
 
+    /* method needed to order a car */
     public TruckCar orderCar(
             Model model, EngineCapacity engineCapacity,
             Color color, WheelSize wheelSize,
@@ -73,6 +89,7 @@ public class ShowRoom {
         return townCarFactory.createCarByOrder(model, engineCapacity, color, wheelSize, options, isSport);
     }
 
+    /* methods used to change the color of a car */
     public void changeColor(Car car, Color color) {
         colorService.change(car, color);
     }
@@ -81,20 +98,25 @@ public class ShowRoom {
         wheelService.change(car, wheelSize);
     }
 
+    /* method needed to add an option to a car */
     public void addOption(Car car, Options option) {
         optionsService.change(car, option);
     }
 
+    /* the method needed to remove the option */
     public void deleteOption(Car car, Options option) {
         optionsService.deleteOption(car, option);
     }
 
+    /* method needed to remove options */
     public void deleteOptions(Car car, List<Options> options) {optionsService.deleteOptions(car, options);}
 
+    /* method needed to add options */
     public void addOptions(Car car, List<Options> options) {
         car.addOptions(options);
     }
 
+    /* methods needed to add a car to the warehouse */
     public void addCarToStorage(TruckCar car) {
         truckFactory.addCarToStock(car);
     }
@@ -107,6 +129,7 @@ public class ShowRoom {
         townCarFactory.addCarToStock(car);
     }
 
+    /* methods needed to get the latest cars from the repository */
     public TruckCar getLastTruckInStorage() {
         return truckFactory.getLastTruckFromStorage();
     }
@@ -119,6 +142,7 @@ public class ShowRoom {
         return townCarFactory.getLastTownCarFromStorage();
     }
 
+    /* method is used to display the possible options to set */
     public void displayAvailableParametersToSet(CarType carType) {
         switch (carType) {
             case TRUCK -> System.out.println(truckFactory.toString());
@@ -128,6 +152,7 @@ public class ShowRoom {
         }
     }
 
+    /* the method needed to display the warehouse */
     public void displayStock(CarType carType) {
         switch (carType) {
             case TRUCK -> System.out.println(truckFactory.toStockString(carType));
@@ -137,6 +162,7 @@ public class ShowRoom {
         }
     }
 
+    /* method needed to get stock size */
     public int getStockSize(CarType carType) {
         switch (carType) {
             case TRUCK -> {return truckFactory.getStockSize(carType);}
@@ -146,6 +172,7 @@ public class ShowRoom {
         }
     }
 
+    /* methods needed to get a car by index */
     public TruckCar getTruckByIndex(int index) {
         return truckFactory.getTruckCarByIndex(index);
     }

@@ -1,3 +1,8 @@
+/*
+ * %W% %E% Anton Punko
+ *
+ * Copyright (c) 2023 GNU GPL, Inc. All Rights Reserved
+ */
 package by.anton.course.project.main.logic;
 
 import by.anton.course.project.cars.BusCar;
@@ -12,10 +17,19 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
+/**
+ *
+ * This class is used to create a user interface and work with it
+ * @version    19.0.1 2022-10-18
+ * @author     Anton Punko
+ */
 public class Logic {
     private static final ShowRoom showRoom = new ShowRoom();
     private static final Scanner SCANNER = new Scanner(System.in);
-    private static final UserInput USER_INPUT = new UserInput();
+    private static final UserInput USER_INPUT = new UserInput();            //this thing is used to simplify the code
+                                                                            //and handle user input
+
+    /* these constants are needed to display messages to the user */
     private static final String GREETING_USER_MESSAGE = "Добро пожаловать в систему управления заводом!";
     private static final String REGULAR_USER_CHOICE_MESSAGE = "Сделайте ваш выбор(нажимайте нужную цифру в " +
             "зависимости от количества элементов в списке)";
@@ -37,26 +51,29 @@ public class Logic {
     private static final String CHOOSE_WHAT_TO_DO = "Вы хотите создать машину, произвести её апгрейд," +
             " просмотреть склад, или вернуться в начало?";
 
-
+    /* main method for working with the user */
     public void mainLogic() {
         System.out.println(GREETING_USER_MESSAGE);
         System.out.println(REGULAR_USER_CHOICE_MESSAGE);
 
         boolean runningProgram = true;
-        int userInput;
+        int userInput;                      //variables for processing numbers entered by the user
         int us_in;
 
+        /* main loop of the program */
         while (runningProgram) {
             System.out.println(CHOOSE_WHAT_TO_CREATE_MESSAGE);
             System.out.println(CarType.returnString());
 
-            userInput = USER_INPUT.getNumber(SCANNER, 4);
-
+            userInput = USER_INPUT.getNumber(SCANNER, 4);   //receiving a number from the user and the number
+                                                                    //4 determines the number of options
+            /* vehicle type selection */
             switch (userInput) {
                 case 1:
                     System.out.println(CHOOSE_WHAT_TO_DO);
                     us_in = USER_INPUT.getNumber(SCANNER, 4);
 
+                    /* user choice what to do with the car */
                     switch (us_in) {
                         case 1 -> createCar(CarType.TRUCK);
                         case 2 -> changeMachineParameter(CarType.TRUCK);
@@ -89,6 +106,8 @@ public class Logic {
                     }
 
                     break;
+
+                /* end of the program */
                 case 4:
                     System.out.println(PARTING);
                     runningProgram = false;
@@ -99,12 +118,16 @@ public class Logic {
         }
     }
 
+    /* method needed to create a car */
     private void createCar(CarType carType) {
         boolean runningMain = true;
 
 
         while (runningMain) {
+
+            /* try block needed to protect against input errors */
             try {
+                /* user input of vehicle parameters */
                 displayAvailableParametersToSet(carType);
 
                 System.out.println(ENTER_MODEL_MESSAGE);
@@ -119,8 +142,9 @@ public class Logic {
                 System.out.println(ENTER_COLOR_MESSAGE);
                 Color color = Color.valueOf(USER_INPUT.getString(SCANNER));
 
-                List<Options> options = Logic.enterOptions();
+                List<Options> options = Logic.enterOptions();           //entering vehicle options
 
+                /* switch is used to set specific car parameters */
                 switch (carType) {
                     case TRUCK -> {
                         System.out.println(ENTER_CAPACITY);
@@ -190,6 +214,7 @@ public class Logic {
         return optionsList;
     }
 
+    /* car parameter change */
     private void changeMachineParameter(CarType carType) {
         int carForChangeParameter = chooseRightCar(carType);
 
@@ -199,12 +224,14 @@ public class Logic {
 
         boolean running = true;
 
+        /* loop used to select and change a vehicle parameter */
         while (running) {
             System.out.println(REGULAR_USER_CHOICE_MESSAGE);
             System.out.println(SERVICE_SELECTION);
 
             int usrChoice = USER_INPUT.getNumber(SCANNER, 4);
 
+            /* selection of a parameter to change check the type of car and set this parameter to it */
             switch (usrChoice) {
                 case 1 -> {
                     System.out.println(ENTER_COLOR_MESSAGE);
@@ -252,6 +279,7 @@ public class Logic {
                         }
                     }
                 }
+                /* case in which the options are changed */
                 case 3 -> {
                     System.out.println(REGULAR_USER_CHOICE_MESSAGE);
                     System.out.println(DELETE_OR_ADD);
@@ -260,10 +288,13 @@ public class Logic {
                     usrChoice = USER_INPUT.getNumber(SCANNER, 2);
 
                     System.out.println(REGULAR_USER_CHOICE_MESSAGE);
+
+                    /* here there is a choice to remove and add an option and then setting it to this parameter */
                     switch (usrChoice) {
                         case 1 -> {
                             boolean runningChoice = true;
 
+                            /* input options */
                             while (runningChoice) {
                                 System.out.println(ENTER_OPTION);
 
@@ -275,6 +306,7 @@ public class Logic {
                                 }
                             }
 
+                            /* setting options for the desired type of car */
                             switch (carType) {
                                 case TRUCK -> {
                                     truck = showRoom.getTruckByIndex(carForChangeParameter);
@@ -339,6 +371,7 @@ public class Logic {
         }
     }
 
+    /* output of parameters available for setting */
     private void displayAvailableParametersToSet(CarType carType) {
         switch (carType) {
             case TRUCK -> showRoom.displayAvailableParametersToSet(carType);
@@ -347,10 +380,12 @@ public class Logic {
         }
     }
 
+    /* machine warehouse display */
     private void displayCarStock(CarType carType) {
         showRoom.displayStock(carType);
     }
 
+    /* choosing the right vehicle */
     private int chooseRightCar(CarType carType) {
         displayCarStock(carType);
         System.out.println(REGULAR_USER_CHOICE_MESSAGE);

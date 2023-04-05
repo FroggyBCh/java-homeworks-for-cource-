@@ -6,15 +6,15 @@
 
 package by.anton.course.project.factory;
 
-import by.anton.course.project.Car;
+
 import by.anton.course.project.cars.*;
 import by.anton.course.project.components.*;
 import by.anton.course.project.utils.CarComponentsCompare;
-import by.anton.course.project.utils.UserInput;
+
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
+
 
 /**
  *
@@ -24,18 +24,19 @@ import java.util.Scanner;
  * @author     Anton Punko
  */
 public class Factory<T> {
-    private final List<Model> models;
-    private final List<EngineCapacity> engineCapacities;
-    private final List<Color> colors;
-    private final List<WheelSize> wheelSizes;
-    private final List<Options> optionsList;
-    private final CarType carType;                                     //a crutch for the correct operation of the program
+    private final List<Model> models;                                 //list of models available for production
+    private final List<EngineCapacity> engineCapacities;              //list of engine capacities for production
+    private final List<Color> colors;                                 //list of colors available for production
+    private final List<WheelSize> wheelSizes;                         //list of wheel sizes available for production
+    private final List<Options> optionsList;                          //list of options that available for production
+    private final CarType carType;                                    //a crutch for the correct operation of the program
     private static final FactoryStock<TruckCar> TRUCK_CAR_FACTORY_STOCK = new FactoryStock<>(); //And it's also crutch
     private static final FactoryStock<BusCar> BUS_CAR_FACTORY_STOCK = new FactoryStock<>();
     private static final FactoryStock<TownCar> TOWN_CAR_FACTORY_STOCK = new FactoryStock<>();
-    private static final UserInput USER_INPUT = new UserInput();
 
     private final CarComponentsCompare compareComponents;       //checking for the presence of components from one list in another
+
+    /* constructor to get components available for production */
     public Factory(List<Model> models, List<EngineCapacity> engineCapacities,
                    List<Color> colors, List<WheelSize> wheelSizes, List<Options> optionsList,
                    CarType carType
@@ -45,8 +46,8 @@ public class Factory<T> {
         this.colors = colors;
         this.wheelSizes = wheelSizes;
         this.optionsList = optionsList;
-        this.fillStorageWithCars(carType);
-        this.compareComponents = new CarComponentsCompare(
+        this.fillStorageWithCars(carType);                            //populating the store and passing a parameter to it
+        this.compareComponents = new CarComponentsCompare(            //passing arguments for comparison
                 models,
                 engineCapacities,
                 colors,
@@ -58,38 +59,44 @@ public class Factory<T> {
     }
 
 
+    /* method for creating truck  */
     public TruckCar createCarByOrder(Model model, EngineCapacity engineCapacity,
                                 Color color, WheelSize wheelSize,
                                 List<Options> options,
                                 int loadCapacity, String companyName
     ) {
 
-
+        /* checking for valid arguments */
         if (
                 compareComponents.checkingCarComponentInTheList(
                         model, engineCapacity, color,
                         wheelSize, options
                         )
         ) {
+
+            /* search for a car with the desired parameters */
             for (TruckCar car : TRUCK_CAR_FACTORY_STOCK.takeCars()) {
 
+                /* validation */
                 if (car.getModel() == model &&
                     car.getColor() == color &&
                     car.getWheelSize() == wheelSize &&
                     car.getEngineCapacity() == engineCapacity
                 ) {
-                    return car;
+                    return car;                 // returning the car with suitable parameters
                 }
 
             }
-                return new TruckCar(color, model, wheelSize, engineCapacity, options, loadCapacity, companyName);
+                return new TruckCar(color, model, wheelSize, engineCapacity, options, loadCapacity, companyName);    //creation of a new machine
             }
         else {
-            System.out.println("Переданы неверные значения для создания автомобиля!");
+            System.out.println("Переданы неверные значения для создания автомобиля!");      //return an empty value if
+                                                                                            //invalid parameters are passed
             return null;
         }
     }
 
+    /* Building a bus */
     public BusCar createCarByOrder(Model model, EngineCapacity engineCapacity,
                                 Color color, WheelSize wheelSize,
                                 List<Options> options,
@@ -120,6 +127,7 @@ public class Factory<T> {
         }
     }
 
+    /* building a city car */
     public TownCar createCarByOrder(Model model, EngineCapacity engineCapacity,
                                 Color color, WheelSize wheelSize,
                                 List<Options> options,
@@ -151,17 +159,22 @@ public class Factory<T> {
 
     }
 
+    /* method to populate storage with cars */
     private void fillStorageWithCars(CarType type) {
 
+        /* switch to select the desired car */
         switch (type) {
+
             case TRUCK -> {
-                List<Options> optionsToaddTruck = Arrays.asList(Options.GPS, Options.AIRBAGS);
+                List<Options> optionsToaddTruck = Arrays.asList(Options.GPS, Options.AIRBAGS);  //list with truck options
+
                 TRUCK_CAR_FACTORY_STOCK.addCar(
                         new TruckCar(
                                 Color.WHITE, Model.MAZ, WheelSize.BIG, EngineCapacity.LARGE_VALUE,
                                 optionsToaddTruck, 20, "Грузилкин"
-                        )
+                        )                                               //adding a new truck to storage
                 );
+
                 TRUCK_CAR_FACTORY_STOCK.addCar(
                         new TruckCar(
                                 Color.RED, Model.MERCEDES, WheelSize.BIG, EngineCapacity.AVERAGE_VALUE,
@@ -169,6 +182,7 @@ public class Factory<T> {
                         )
                 );
             }
+
             case BUS -> {
                 List<Options> optionsToAddBus = Arrays.asList(Options.GLONASS, Options.GPS);
                 BUS_CAR_FACTORY_STOCK.addCar(
@@ -184,6 +198,7 @@ public class Factory<T> {
                         )
                 );
             }
+
             case TOWN_CAR -> {
                 List<Options> optionsToAddTownCar = Arrays.asList(Options.AIRBAGS, Options.TINTING);
                 TOWN_CAR_FACTORY_STOCK.addCar(
@@ -204,6 +219,7 @@ public class Factory<T> {
 
     }
 
+    /* method for adding a machine to storage */
     public void addCarToStock(TruckCar car) {
         TRUCK_CAR_FACTORY_STOCK.addCar(car);
     }
@@ -216,6 +232,7 @@ public class Factory<T> {
         TOWN_CAR_FACTORY_STOCK.addCar(car);
     }
 
+    /* method used to get the latest car from the store */
     public TruckCar getLastTruckFromStorage() {
         return TRUCK_CAR_FACTORY_STOCK.takeCar();
     }
@@ -228,6 +245,7 @@ public class Factory<T> {
         return TOWN_CAR_FACTORY_STOCK.takeCar();
     }
 
+    /* the method needed to output available production items */
     @Override
     public String toString() {
         switch (carType) {
@@ -265,6 +283,7 @@ public class Factory<T> {
         }
     }
 
+    /* method to output storage in string format */
     public String toStockString(CarType carType) {
         switch (carType) {
             case TRUCK -> { return TRUCK_CAR_FACTORY_STOCK.toString(); }
@@ -274,6 +293,7 @@ public class Factory<T> {
         }
     }
 
+    /* method to get storage size */
     public int getStockSize(CarType carType) {
         switch (carType) {
             case TRUCK -> { return TRUCK_CAR_FACTORY_STOCK.takeCars().size(); }
@@ -283,6 +303,7 @@ public class Factory<T> {
         }
     }
 
+    /* the method needed to receive a car by index from the warehouse */
     public TruckCar getTruckCarByIndex(int index) {
         return TRUCK_CAR_FACTORY_STOCK.takeCar(index);
     }
